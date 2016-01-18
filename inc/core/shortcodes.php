@@ -1441,14 +1441,21 @@ class Su_Shortcodes {
 				'before'  => '',
 				'after'   => '',
 				'post_id' => '',
+				'slug'    => '',
+				'post_type'=> 'page',
 				'filter'  => ''
 			), $atts, 'post' );
-		// Define current post ID
-		if ( !$atts['post_id'] ) $atts['post_id'] = get_the_ID();
-		// Check post ID
-		if ( !is_numeric( $atts['post_id'] ) || $atts['post_id'] < 1 ) return sprintf( '<p class="su-error">Post: %s</p>', __( 'post ID is incorrect', 'shortcodes-ultimate' ) );
-		// Get the post
-		$post = get_post( $atts['post_id'] );
+		// Get Post ID from slug, if present
+		if ( $atts['slug'] ) {
+		    $post = get_page_by_path( $atts['slug'], OBJECT, $atts['post_type'] );
+		} else {
+			// Define current post ID
+			if ( !$atts['post_id'] ) $atts['post_id'] = get_the_ID();
+			// Check post ID
+			if ( !is_numeric( $atts['post_id'] ) || $atts['post_id'] < 1 ) return sprintf( '<p class="su-error">Post: %s</p>', __( 'post ID is incorrect', 'shortcodes-ultimate' ) );
+			// Get the post
+			$post = get_post( $atts['post_id'] );
+		}
 		// Set default value if meta is empty
 		$post = ( empty( $post ) || empty( $post->$atts['field'] ) ) ? $atts['default'] : $post->$atts['field'];
 		// Apply cutom filter
